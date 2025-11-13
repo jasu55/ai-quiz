@@ -12,10 +12,10 @@ model articles {
   id         Int          @id @default(autoincrement())
   title      String?
   content    String?
-  summery    String?
   userid     Int?
   createdat  DateTime?    @default(now()) @db.Timestamptz(6)
   updatedat  DateTime?    @default(now()) @db.Timestamptz(6)
+  summary    String?
   users      users?       @relation(fields: [userid], references: [id], onDelete: NoAction, onUpdate: NoAction)
   quizzes    quizzes[]
   userscores userscores[]

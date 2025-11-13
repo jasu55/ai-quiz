@@ -42,15 +42,24 @@ export function AppSidebar() {
       <SidebarHeader />
       <SidebarContent>
         <div className="mx-4">
-          {history.map((data, index) => (
-            <div
-              key={index}
-              onClick={() => HistoryOnclick(data)}
-              className="h-6 font-semibold my-2 "
-            >
-              {data.articletitle}
+          {history && (
+            <div>
+              {history.map((data, index) => (
+                <div key={index} className="h-6 font-semibold my-2 ">
+                  <div className="flex w-[223px] justify-between">
+                    <div onClick={() => HistoryOnclick(data)}>
+                      {data.articletitle}
+                    </div>
+                    <img
+                      onClick={() => DeleteTitle(data)}
+                      src="/delete.svg
+                  "
+                    ></img>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
         <SidebarGroup />
         <SidebarGroup />
