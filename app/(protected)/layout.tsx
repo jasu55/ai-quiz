@@ -50,8 +50,8 @@ export default function RootLayout({
 
           <SignedIn>
             <Header />
-            <Sidebar>{children}</Sidebar>
           </SignedIn>
+          <Sidebar>{children}</Sidebar>
         </body>
       </html>
     </ClerkProvider>

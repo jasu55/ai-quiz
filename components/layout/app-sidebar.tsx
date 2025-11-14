@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { get } from "node:http";
 
 export function AppSidebar() {
   // const router = useRouter();
@@ -30,6 +31,30 @@ export function AppSidebar() {
   const HistoryOnclick = (data: { id: string }) => {
     const ID = data.id;
     // router.push(`/protected/history/${ID}`);
+  };
+
+  const DeleteTitle = async (data: { id: string }) => {
+    if (
+      confirm("Are you sure you want to delete this history item?") === true
+    ) {
+      const ID = data.id;
+
+      const baseUrl =
+        process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+
+      const response = await fetch(`${baseUrl}/api/history/${ID}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ID }),
+        cache: "no-store",
+      });
+      getHistory();
+      return response;
+    } else {
+      return;
+    }
   };
 
   return (

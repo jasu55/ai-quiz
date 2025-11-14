@@ -20,8 +20,10 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/router";
 
 const HomePage = () => {
   const [page, setPage] = useState<"home" | "summary" | "quiz" | "last">(
@@ -49,6 +51,18 @@ const HomePage = () => {
   const [correctAnswers, setCorrectAnswers] = useState(0);
 
   const [loading, setLoading] = useState(false);
+  const { user, isLoaded } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoaded && !user) {
+      router.push("/login");
+    }
+  }, [isLoaded, user]);
+
+  if (!isLoaded) {
+    return <div>Loading...</div>;
+  }
 
   // 🧠 Summary үүсгэх
   const handleGenerateSummary = async () => {
