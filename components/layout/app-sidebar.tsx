@@ -8,20 +8,18 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { get } from "node:http";
+import { useRouter } from "next/navigation";
 
 export function AppSidebar() {
-  // const router = useRouter();
-  const [history, setHistory] = useState<
-    { articletitle: string; id: string }[]
-  >([]);
+  const router = useRouter();
+  const [history, setHistory] = useState<{ title: string; id: string }[]>([]);
 
   const getHistory = async () => {
     const res = await fetch("/api/history");
     const responseData = await res.json();
     const data = responseData.data;
-    setHistory(data.rows);
+    console.log("history data:", data);
+    setHistory(data);
   };
 
   useEffect(() => {
@@ -30,7 +28,7 @@ export function AppSidebar() {
 
   const HistoryOnclick = (data: { id: string }) => {
     const ID = data.id;
-    // router.push(`/protected/history/${ID}`);
+    router.push(`/history/${ID}`);
   };
 
   const DeleteTitle = async (data: { id: string }) => {
@@ -72,9 +70,7 @@ export function AppSidebar() {
               {history.map((data, index) => (
                 <div key={index} className="h-6 font-semibold my-2 ">
                   <div className="flex w-[223px] justify-between">
-                    <div onClick={() => HistoryOnclick(data)}>
-                      {data.articletitle}
-                    </div>
+                    <div onClick={() => HistoryOnclick(data)}>{data.title}</div>
                     <img
                       onClick={() => DeleteTitle(data)}
                       src="/delete.svg

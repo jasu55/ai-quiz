@@ -6,6 +6,7 @@ import {
   SignedIn,
   SignedOut,
   UserButton,
+  SignIn,
 } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -40,18 +41,21 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <SignedOut>
-            <SignInButton />
+            <div className="flex items-center justify-center min-h-screen">
+              <SignIn routing="hash" />
+              {/* <SignInButton />
             <SignUpButton>
               <button className="bg-[#6c47ff] text-ceramic-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
                 Sign Up
               </button>
-            </SignUpButton>
+            </SignUpButton> */}
+            </div>
           </SignedOut>
 
           <SignedIn>
             <Header />
+            <Sidebar>{children}</Sidebar>
           </SignedIn>
-          <Sidebar>{children}</Sidebar>
         </body>
       </html>
     </ClerkProvider>

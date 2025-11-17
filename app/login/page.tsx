@@ -1,10 +1,10 @@
 "use client";
 
-import { SignIn } from "@clerk/clerk-react";
+import { ClerkProvider, SignIn } from "@clerk/nextjs";
 
 const page = () => {
   return (
-    <div>
+    <div className="flex items-center h-screen justify-center w-screen bg-amber-700 ">
       <SignIn routing="hash" />
     </div>
   );
