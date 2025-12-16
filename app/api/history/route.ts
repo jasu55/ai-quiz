@@ -1,15 +1,21 @@
 import { prisma } from "@/lib/prisma";
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-});
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 export async function GET() {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const articles = await prisma.articles.findMany({
+    where: { userid: userId },
     include: { quizzes: true },
-    orderBy: { id: "desc" },
+    orderBy: { createdat: "desc" },
   });
 
   return NextResponse.json({ data: articles });
@@ -17,6 +23,12 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
+    const { userId } = await auth();
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { articleContent, articleTitle } = await req.json();
 
     if (!articleContent || !articleTitle) {
@@ -28,12 +40,12 @@ export async function POST(req: NextRequest) {
 
     // Gemini API-аар summary гаргах
     const prompt = `Please provide a concise summary of the following article: ${articleContent}`;
-    const aiResponse = await ai.models.generateContent({
+    const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
-      contents: prompt,
     });
-
-    const summary = (aiResponse as any).text ?? aiResponse;
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const summary = response.text();
 
     // Article хадгалах (Prisma ашиглан)
     const createdArticle = await prisma.articles.create({
@@ -41,6 +53,7 @@ export async function POST(req: NextRequest) {
         title: articleTitle,
         content: articleContent,
         summary: summary,
+        userid: userId,
       },
     });
 

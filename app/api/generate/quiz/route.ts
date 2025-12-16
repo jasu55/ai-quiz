@@ -1,13 +1,18 @@
 import { prisma } from "@/lib/prisma";
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-});
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 export async function POST(req: NextRequest) {
   try {
+    const { userId } = await auth();
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { articleSummary, takeID } = await req.json();
 
     if (!articleSummary || !takeID) {
@@ -17,25 +22,40 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Verify the article belongs to the user
+    const article = await prisma.articles.findFirst({
+      where: {
+        id: Number(takeID),
+        userid: userId,
+      },
+    });
+
+    if (!article) {
+      return NextResponse.json(
+        { error: "Article not found or unauthorized" },
+        { status: 404 }
+      );
+    }
+
     const prompt = `Generate 5 multiple choice questions based on this article: ${articleSummary}.
 Return valid JSON like:
 [
   { "question": "Question", "options": ["A","B","C","D"], "answer": "0" }
 ]`;
 
-    const aiResponse = await ai.models.generateContent({
+    const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
-      contents: prompt,
     });
-
-    const text = (aiResponse as any).text ?? aiResponse;
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
 
     const extractJsonArray = (t: string) => {
       const match = t.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
       return match ? match[1].trim() : t.trim();
     };
 
-    const cleaned = extractJsonArray(text.text || text);
+    const cleaned = extractJsonArray(text);
     const quizList = JSON.parse(cleaned);
 
     // Prisma ашиглан Quiz-үүдийг хадгалах

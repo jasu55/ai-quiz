@@ -1,6 +1,5 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../lib/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -12,11 +11,10 @@ model articles {
   id         Int          @id @default(autoincrement())
   title      String?
   content    String?
-  userid     Int?
+  userid     String?
   createdat  DateTime?    @default(now()) @db.Timestamptz(6)
   updatedat  DateTime?    @default(now()) @db.Timestamptz(6)
   summary    String?
-  users      users?       @relation(fields: [userid], references: [id], onDelete: NoAction, onUpdate: NoAction)
   quizzes    quizzes[]
   userscores userscores[]
 }
@@ -74,7 +72,6 @@ model users {
   name         String?        @db.VarChar(50)
   createdat    DateTime?      @default(now()) @db.Timestamptz(6)
   updatedat    DateTime?      @default(now()) @db.Timestamptz(6)
-  articles     articles[]
   quizattempts quizattempts[]
 }
 

@@ -188,7 +188,7 @@ const HomePage = () => {
         </div>
       )}
       {page === "summary" && (
-        <div className="mt-10">
+        <div className="mt-10 ">
           <button
             className="flex items-center gap-2 bg-white p-4 cursor-pointer rounded-sm ml-114 mb-5 border-2"
             onClick={() => setPage("home")}
@@ -204,7 +204,7 @@ const HomePage = () => {
                 </div>
               </div>
 
-              <div className="mt-5 text-[#71717A] flex gap-2">
+              <div className="mt-20 text-[#71717A] flex gap-2">
                 <img src="/Shape.svg" />
                 Summarized Content
               </div>
@@ -232,7 +232,7 @@ const HomePage = () => {
         </div>
       )}
       {page === "quiz" && generatedQuiz[step] && (
-        <div className="w-[700px] mt-50 mx-auto bg-white border-2 rounded-md p-6">
+        <div className="w-[700px] mt-10 mx-auto bg-white border-2 rounded-md p-6">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">Quick Test</h1>
             <AlertDialog>
@@ -288,7 +288,7 @@ const HomePage = () => {
         </div>
       )}
       {page === "last" && (
-        <div className="w-[600px] h-fit ml-64 mt-50">
+        <div className="w-[600px] h-fit ml-64 mt-10">
           <div className="mx-7">
             <div className="flex justify-between w-[600px]">
               <div className="flex gap-2">

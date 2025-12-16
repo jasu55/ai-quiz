@@ -5,15 +5,21 @@ import { useRouter } from "next/navigation";
 const Header = () => {
   const router = useRouter();
   return (
-    <div className="w-screen h-16 items-center flex border-b-2 fixed  bg-accent">
+    <div className="w-screen h-16 items-center flex justify-between border-b-2 fixed bg-accent px-10 z-50">
       <button
         onClick={() => router.push("/")}
-        className="pl-10 font-semibold text-[30px] text-sm:text-[36px]  h-10 bg-transparent border-0 cursor-pointer"
+        className="font-semibold text-[30px] sm:text-[36px] h-10 bg-transparent border-0 cursor-pointer"
       >
         Quiz app
       </button>
-      <div className="text-[26px] ml-490">
-        <UserButton />
+      <div className="flex items-center">
+        <UserButton
+          appearance={{
+            elements: {
+              avatarBox: "w-10 h-10",
+            },
+          }}
+        />
       </div>
     </div>
   );
